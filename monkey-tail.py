@@ -117,3 +117,4 @@ with open(input_filename, 'r') as input_file, open(output_filename, 'w') as outp
             print_progress(input_filename, output_filename)
 monkey_print('Processing complete, wrote new logfile to ' + output_filename)
 monkey_print('Now upload it so the other monkeys can look at them.')
+input('Press any key to exit...')
