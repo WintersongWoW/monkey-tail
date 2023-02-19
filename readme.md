@@ -12,4 +12,4 @@ Application to convert 1.14 hermes logs to native 1.14 logs.
 - select the log file from the menu as a number, for example 1
 
 ## Restrictions
-Currently only supports molten core raids, no wipes.
+Does not support wipes. Encounters will be one section from first pull till kill.
