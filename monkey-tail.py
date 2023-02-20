@@ -1,7 +1,7 @@
 import os
+import re
 from boss import Boss
 from boss import boss_data
-import re
 
 
 def extract_timestamp(log_entry):
@@ -41,26 +41,24 @@ def update_realm(log_entry, realmname):
     return log_entry.replace("-\"", "-" + realmname + "\"")
 
 
-# ENCOUNTER_START: encounterID, encounterName, difficultyID, groupSize
-#
-# encounterID: 672 (Boss id)
-# encounterName: Ragnaros (Boss name)
-# difficultyID: 9 (40 man raid), 148 (ZG, AQ20)
-# groupSize: 40 (raid size)
-
 def write_segment_start(log_entry, boss, writer):
+    # ENCOUNTER_START: encounterID, encounterName, difficultyID, groupSize
+    #
+    # encounterID: 672 (Boss id)
+    # encounterName: Ragnaros (Boss name)
+    # difficultyID: 9 (40 man raid), 148 (ZG, AQ20)
+    # groupSize: 40 (raid size)
     writer.write(extract_timestamp(log_entry) + "  ENCOUNTER_START,"+str(boss.id)+",\"" + boss.name + "\","+str(boss.difficulty)+","+str(boss.group_size)+"\n")
 
 
-# ENCOUNTER_END: encounterID, encounterName, difficultyID, groupSize, success
-#
-# encounterID: 672 (Boss id)
-# encounterName: Ragnaros (Boss name)
-# difficultyID: 9 (40 man raid), 148 (ZG, AQ20)
-# groupSize: 40 (raid size)
-# success: 1 (kill), 0 (wipe)
-
 def write_segment_end(log_entry, boss, writer):
+    # ENCOUNTER_END: encounterID, encounterName, difficultyID, groupSize, success
+    #
+    # encounterID: 672 (Boss id)
+    # encounterName: Ragnaros (Boss name)
+    # difficultyID: 9 (40 man raid), 148 (ZG, AQ20)
+    # groupSize: 40 (raid size)
+    # success: 1 (kill), 0 (wipe)
     writer.write(extract_timestamp(log_entry) + "  ENCOUNTER_END,"+str(boss.id)+",\"" + boss.name + "\","+str(boss.difficulty)+","+str(boss.group_size)+",1\n")
 
 
