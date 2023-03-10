@@ -71,7 +71,7 @@ def fix_segmenting_start(log_entry, writer):
 def fix_segmenting_end(log_entry, writer):
     # 0xa18 — specific UnitFlag for Majordomo Executus's ends of encounter, the 1 indicates Majordomo turning friendly - see https://wowpedia.fandom.com/wiki/UnitFlag.
     for boss in boss_data:
-        if not boss.encounter_end_found and ("UNIT_DIED" in log_entry or ("0xa18" in log_entry and "Majordomo Executus" in log_entry)) and "\""+boss.name+"\"" in log_entry:
+        if not boss.encounter_end_found and ("UNIT_DIED" in log_entry or (boss.name == "Majordomo Executus" and "0xa18" in log_entry)) and "\""+boss.name+"\"" in log_entry:
             write_segment_end(log_entry, boss, writer)
             boss.encounter_end_found = True
 
