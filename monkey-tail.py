@@ -2,6 +2,7 @@ import os
 import re
 from boss import boss_data
 
+guidToAvailableHeal = {}
 
 def extract_timestamp(log_entry):
     """
@@ -21,12 +22,68 @@ def print_progress(input_filename, output_filename):
     monkey_print(f"{os.path.getsize(output_filename) / os.path.getsize(input_filename) * 100 :.2f}% complete")
 
 
+def process_dmg(log_entry):
+    time_split = log_entry.split("  ")
+    timestamp = time_split[0]
+    rest = time_split[1].split(",")
+    targetGUID = rest[5]
+
+    if targetGUID.startswith("Creature"):
+        return
+
+    dmg1 = rest[28]
+    dmg2 = rest[29]
+
+    if rest[0] == "SWING_DAMAGE":
+        dmg1 = rest[25]
+        dmg2 = rest[26]
+
+    dmg = int(dmg1)
+
+    if dmg1 != dmg2:
+        print("DEBUG: DMG DIFF", dmg1, dmg2, log_entry)
+
+    guidToAvailableHeal[targetGUID] = guidToAvailableHeal.get(targetGUID, 0) + dmg
+
+def process_heal(log_entry, writer):
+    time_split = log_entry.split("  ")
+    timestamp = time_split[0]
+    rest = time_split[1].split(",")
+    targetGUID = rest[5]
+
+    if targetGUID.startswith("Creature"):
+        return
+
+    heal1 = rest[28]
+    heal2 = rest[29]
+    heal = int(heal1)
+
+    if heal1 != heal2:
+        print("DEBUG: HEAL DIFF", heal1, heal2, log_entry)
+
+    available = guidToAvailableHeal.get(targetGUID, 0)
+    guidToAvailableHeal[targetGUID] = max(0, available - heal)
+    overheal = heal - available
+
+    if overheal > 0:
+        rest[30] = str(overheal)
+        writer.write(time_split[0] + "  " + ",".join(rest))
+    else:
+        writer.write(log_entry)
+
 def process_line(log_entry, writer):
     log_entry = fix_zone(log_entry)
     log_entry = update_realm(log_entry, "Everlook")
 
     fix_segmenting_start(log_entry, writer)
-    writer.write(log_entry)
+
+    if "SWING_DAMAGE" in log_entry or "SPELL_DAMAGE" in log_entry or "SPELL_PERIODIC_DAMAGE" in log_entry:
+        process_dmg(log_entry)
+    elif "SPELL_HEAL" in log_entry or "SPELL_PERIODIC_HEAL" in log_entry:
+        process_heal(log_entry, writer)
+    else:
+        writer.write(log_entry)
+
     fix_segmenting_end(log_entry, writer)
 
 
