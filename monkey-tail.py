@@ -79,7 +79,8 @@ def process_line(log_entry, writer):
 
     if "SWING_DAMAGE" in log_entry or "SPELL_DAMAGE" in log_entry or "SPELL_PERIODIC_DAMAGE" in log_entry:
         process_dmg(log_entry)
-    elif "SPELL_HEAL" in log_entry or "SPELL_PERIODIC_HEAL" in log_entry:
+
+    if "SPELL_HEAL" in log_entry or "SPELL_PERIODIC_HEAL" in log_entry:
         process_heal(log_entry, writer)
     else:
         writer.write(log_entry)
