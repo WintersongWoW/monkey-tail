@@ -13,3 +13,4 @@ Application to convert 1.14 hermes logs to native 1.14 logs.
 
 ## Restrictions
 - Does not track pet, minion damage.
+- Bosses with multiple Units are currently considered killed when the first unit dies, think; Silithid Royalty, C'thun and Four horsemen.
