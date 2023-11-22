@@ -131,10 +131,14 @@ def fix_segmenting_start(log_entry, writer):
 
 def fix_segmenting_end(log_entry, writer):
     # 0xa18 — specific UnitFlag for Majordomo Executus's ends of encounter, the 1 indicates Majordomo turning friendly - see https://wowpedia.fandom.com/wiki/UnitFlag.
+    # TODO add proper handling for segment end for bosses with multiple units like; bug trio, four horseman
     for boss in boss_data:
-        if not boss.encounter_end_found and ("UNIT_DIED" in log_entry or (boss.name == "Majordomo Executus" and "0xa18" in log_entry)) and "\""+boss.name+"\"" in log_entry:
-            write_segment_end(log_entry, boss, writer)
-            boss.encounter_end_found = True
+        triggers = boss.alternative_trigger.copy()
+        triggers.append(boss.name)
+        for trigger in triggers:
+            if not boss.encounter_end_found and ("UNIT_DIED" in log_entry or (boss.name == "Majordomo Executus" and "0xa18" in log_entry)) and "\""+trigger+"\"" in log_entry:
+                write_segment_end(log_entry, boss, writer)
+                boss.encounter_end_found = True
 
 
 def select_inputfile():
