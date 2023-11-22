@@ -38,14 +38,14 @@ boss_data = [
 
     # Temple of Ahn'Qiraj
     Boss(709, "The Prophet Skeram", "Temple of Ahn'Qiraj", "aq40", 531, 9, 40, []),
-    Boss(710, "Silithid Royalty", "Temple of Ahn'Qiraj", "aq40", 531, 9, 40, []),
+    Boss(710, "Silithid Royalty", "Temple of Ahn'Qiraj", "aq40", 531, 9, 40, ["Lord Kri", "Princess Yauj", "Vem"]),
     Boss(711, "Battleguard Sartura", "Temple of Ahn'Qiraj", "aq40", 531, 9, 40, []),
     Boss(712, "Fankriss the Unyielding", "Temple of Ahn'Qiraj", "aq40", 531, 9, 40, []),
     Boss(713, "Viscidus", "Temple of Ahn'Qiraj", "aq40", 531, 9, 40, []),
     Boss(714, "Princess Huhuran", "Temple of Ahn'Qiraj", "aq40", 531, 9, 40, []),
     Boss(715, "Twin Emperors", "Temple of Ahn'Qiraj", "aq40", 531, 9, 40, ["Emperor Vek'lor", "Emperor Vek'nilash"]),
     Boss(716, "Ouro", "Temple of Ahn'Qiraj", "aq40", 531, 9, 40, []),
-    Boss(717, "C'thun", "Temple of Ahn'Qiraj", "aq40", 531, 9, 40, []),
+    Boss(717, "C'thun", "Temple of Ahn'Qiraj", "aq40", 531, 9, 40, ["Eye of C'Thun"]),
 
     # Ruins of Ahn'Qiraj
     Boss(718, "Kurinnaxx", "Ruins of Ahn'Qiraj", "aq20", 509, 148, 20, []),
@@ -82,7 +82,7 @@ boss_data = [
     # The Military Quarter
     Boss(1113, "Instructor Razuvious", "Naxxramas", "naxx", 533, 9, 40, []),
     Boss(1109, "Gothik the Harvester", "Naxxramas", "naxx", 533, 9, 40, []),
-    Boss(1121, "The Four Horsemen", "Naxxramas", "naxx", 533, 9, 40, []),
+    Boss(1121, "The Four Horsemen", "Naxxramas", "naxx", 533, 9, 40, ["Thane Korth'azz", "Lady Blaumeux", "Sir Zeliek", "Highlord Mograine"]),
     # The Construct Quarter
     Boss(1118, "Patchwerk", "Naxxramas", "naxx", 533, 9, 40, []),
     Boss(1111, "Grobbulus", "Naxxramas", "naxx", 533, 9, 40, []),
