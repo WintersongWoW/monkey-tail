@@ -121,9 +121,12 @@ def write_segment_end(log_entry, boss, writer):
 
 def fix_segmenting_start(log_entry, writer):
     for boss in boss_data:
-        if not boss.encounter_start_found and "\""+boss.name+"\"" in log_entry:
-            write_segment_start(log_entry, boss, writer)
-            boss.encounter_start_found = True
+        triggers = boss.alternative_trigger.copy()
+        triggers.append(boss.name)
+        for trigger in triggers:
+            if not boss.encounter_start_found and "\""+trigger+"\"" in log_entry:
+                write_segment_start(log_entry, boss, writer)
+                boss.encounter_start_found = True
 
 
 def fix_segmenting_end(log_entry, writer):
