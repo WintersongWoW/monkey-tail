@@ -1,8 +1,12 @@
 import os
 import re
 from boss import boss_data
+from tkinter import Tk 
+from tkinter.filedialog import askopenfilename
 
 guidToAvailableHeal = {}
+trigger_count = 0
+triggered_triggers = set()  # Keep track of triggered triggers for the current boss to check for wipes on encounters with multiple bosses.
 
 def extract_timestamp(log_entry):
     """
@@ -130,37 +134,44 @@ def fix_segmenting_start(log_entry, writer):
 
 
 def fix_segmenting_end(log_entry, writer):
-    # 0xa18 — specific UnitFlag for Majordomo Executus's ends of encounter, the 1 indicates Majordomo turning friendly - see https://wowpedia.fandom.com/wiki/UnitFlag.
-    # TODO add proper handling for segment end for bosses with multiple units like; bug trio, four horseman
+    global trigger_count
+    global triggered_triggers
     for boss in boss_data:
         triggers = boss.alternative_trigger.copy()
-        triggers.append(boss.name)
-        for trigger in triggers:
-            if not boss.encounter_end_found and ("UNIT_DIED" in log_entry or (boss.name == "Majordomo Executus" and "0xa18" in log_entry)) and "\""+trigger+"\"" in log_entry:
-                write_segment_end(log_entry, boss, writer)
-                boss.encounter_end_found = True
+        if not boss.name in ['Silithid Royalty', 'Twin Emperors', 'The Four Horsemen']:
+            triggers.append(boss.name)
 
+        if boss.name in ['Silithid Royalty', 'Twin Emperors', 'The Four Horsemen']:
+            for trigger in triggers:
+                if not boss.encounter_end_found and ("UNIT_DIED" in log_entry) and "\""+trigger+"\"" in log_entry:
+                    if trigger in triggered_triggers:
+                        trigger_count = 0  # Reset trigger_count if the trigger has already been triggered
+                        triggered_triggers = set()
+                        triggered_triggers.add(trigger)
+                        trigger_count += 1
+                    else:
+                        triggered_triggers.add(trigger)
+                        trigger_count += 1
 
-def select_inputfile():
-    # Get a list of all .txt files in the current directory that have not been processed yet
-    txt_files = [f for f in os.listdir() if (f.endswith(".txt") and not f.endswith(".monkey-tail.txt"))]
-
-    # Print the list of .txt files and ask the user to select one
-    monkey_print("Found the following logs")
-    for i, txt_file in enumerate(txt_files):
-        print(f"{i+1}. {txt_file}")
-
-    selected_file = input("Please select a file by entering its number: ")
-
-    # Get and return the selected file name
-    return txt_files[int(selected_file) - 1]
+                    if trigger_count == len(triggers):
+                        if not boss.encounter_end_found and "UNIT_DIED" in log_entry:
+                            write_segment_end(log_entry, boss, writer)
+                            boss.encounter_end_found = True
+                            trigger_count = 0
+        else:
+            # 0xa18 — specific UnitFlag for Majordomo Executus's ends of encounter, the 1 indicates Majordomo turning friendly - see https://wowpedia.fandom.com/wiki/UnitFlag.
+            for trigger in triggers:
+                if not boss.encounter_end_found and ("UNIT_DIED" in log_entry or (boss.name == "Majordomo Executus" and "0xa18" in log_entry)) and "\""+trigger+"\"" in log_entry:
+                    if not trigger == "Eye of C'Thun":
+                        write_segment_end(log_entry, boss, writer)
+                        boss.encounter_end_found = True
 
 
 def monkey_print(string):
     print("(^.^)@ |", string)
 
-
-input_filename = select_inputfile()
+Tk().withdraw()
+input_filename = askopenfilename(filetypes=[('Text files', '.txt')], title='Select the log file')
 output_filename = input_filename.replace(".txt", ".monkey-tail.txt")
 
 with open(input_filename, "r") as input_file, open(output_filename, "w") as output_file:
